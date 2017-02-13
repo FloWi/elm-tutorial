@@ -20,13 +20,15 @@ main =
 
 
 type alias Model =
-    { dieFace : Int
+    { dieFaces : List Int
     }
 
+numberOfDice : Int
+numberOfDice = 10
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model 1, Cmd.none )
+    ( Model (List.repeat numberOfDice 1), Cmd.none )
 
 
 
@@ -35,17 +37,17 @@ init =
 
 type Msg
     = Roll
-    | NewFace Int
+    | NewFaces (List Int)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Roll ->
-            ( model, Random.generate NewFace (Random.int 1 6) )
+            ( model, Random.generate NewFaces (Random.list (List.length model.dieFaces) (Random.int 1 6)) )
 
-        NewFace newFace ->
-            ( Model newFace, Cmd.none )
+        NewFaces newFaces ->
+            ( Model newFaces, Cmd.none )
 
 
 
@@ -64,15 +66,19 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
-        imgTag =
-            img
-                [ src ("/elm-tutorial/resources/dice/Dice-" ++ toString (model.dieFace) ++ ".svg")
-                , width 100
-                , height 100
-                ]
-                []
+        imgTags =
+            List.map
+                (\dieFace ->
+                    img
+                        [ src ("/elm-tutorial/resources/dice/Dice-" ++ toString (dieFace) ++ ".svg")
+                        , width 100
+                        , height 100
+                        ]
+                        []
+                )
+                model.dieFaces
     in
         div []
-            [ div [] [ imgTag ]
+            [ div [] imgTags
             , div [] [ button [ onClick Roll ] [ text "Roll" ] ]
             ]

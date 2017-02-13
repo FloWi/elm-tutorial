@@ -85,6 +85,7 @@ update msg model =
 
 -- VIEW
 
+
 onEnter : Msg -> Attribute Msg
 onEnter msg =
     let
@@ -97,15 +98,14 @@ onEnter msg =
         on "keydown" (Json.andThen isEnter keyCode)
 
 
-
 view : Model -> Html Msg
 view model =
     div []
         -- override onSubmit to prevent the form data from being posted
         -- onEnter enables the user to trigger the validation via the enter key from every form field
         -- not DRY
-        [ Html.form [ onSubmit Validate]
-            [ input [ type_ "text", placeholder "Name", onInput Name, onEnter Validate] []
+        [ Html.form [ onSubmit Validate ]
+            [ input [ type_ "text", placeholder "Name", onInput Name, onEnter Validate ] []
             , input [ type_ "password", placeholder "Password", onInput Password, onEnter Validate ] []
             , input [ type_ "password", placeholder "Re-enter Password", onInput PasswordAgain, onEnter Validate ] []
             , button [ onClick Validate ] [ text "Validate" ]
